@@ -1,8 +1,8 @@
-# ClipSync
+# Clippy
 
 Send your iPad clipboard (text **and** images) to your Windows laptop with one tap.
 
-ClipSync is a small FastAPI server that runs on Windows and receives clipboard contents from an iPad Shortcut over your local network. Copy something on the iPad, tap a button, and it is ready to paste on your laptop.
+Clippy is a small FastAPI server that runs on Windows and receives clipboard contents from an iPad Shortcut over your local network. Copy something on the iPad, tap a button, and it is ready to paste on your laptop.
 
 ---
 
@@ -51,8 +51,8 @@ Both devices must be on the **same network**. Some campus and public Wi-Fi netwo
 ## Installation
 
 ```bash
-git clone https://github.com/<your-username>/clipsync.git
-cd clipsync
+git clone https://github.com/sirskye/clippy.git
+cd clippy
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
@@ -77,7 +77,7 @@ qrcode
 Set your secret token as an environment variable (or in a `.env` file, which you should **not** commit):
 
 ```powershell
-setx CLIPSYNC_TOKEN "your-long-random-secret"
+setx CLIPPY_TOKEN "your-long-random-secret"
 ```
 
 Generate a good token with:
@@ -106,7 +106,7 @@ Check it's working by opening `http://localhost:8000/docs` on the laptop, then `
 2. Add **Get Clipboard**.
 3. Add **Get Contents of URL**.
    - If it reads *"Get contents of Clipboard"*, tap **Clipboard** → **Clear**, then tap **URL** and enter:
-     `http://clipsync.local:8765/clip` (or your laptop's IP).
+     `http://clippu.local:8765/clip` (or your laptop's IP).
 4. Expand the action (›):
    - **Method:** `POST`
    - **Headers:** `X-Token` → your token
@@ -132,7 +132,7 @@ Instead of typing the address and token into the Shortcut:
 
 1. On the laptop, open `http://localhost:8765/pair` to show a QR code containing:
    ```json
-   {"host": "clipsync.local", "port": 8765, "token": "..."}
+   {"host": "clippy.local", "port": 8765, "token": "..."}
    ```
 2. On the iPad, run the **Pair** shortcut: *Scan QR or Barcode* → *Get Dictionary from Input* → *Save File* (overwrite).
 3. **Send to Laptop** reads the saved file for its host and token.
@@ -172,13 +172,13 @@ Re-scan whenever the address or token changes. Treat the QR code like a password
 ```bash
 # Text
 curl -X POST http://localhost:8765/clip \
-  -H "X-Token: $CLIPSYNC_TOKEN" \
+  -H "X-Token: $clippy_TOKEN" \
   -H "Content-Type: text/plain" \
   --data "hello from curl"
 
 # Image (use --data-binary, not --data)
 curl -X POST http://localhost:8765/clip \
-  -H "X-Token: $CLIPSYNC_TOKEN" \
+  -H "X-Token: $clippy_TOKEN" \
   -H "Content-Type: image/heic" \
   --data-binary @photo.heic
 ```
@@ -187,10 +187,10 @@ curl -X POST http://localhost:8765/clip \
 
 ## Running at startup
 
-1. Create `start_clipsync.bat`:
+1. Create `start_clippy.bat`:
    ```bat
    @echo off
-   cd /d C:\path\to\clipsync
+   cd /d C:\path\to\clippy
    .venv\Scripts\pythonw.exe -m uvicorn main:app --host 0.0.0.0 --port 8765
    ```
 2. Press `Win + R` → `shell:startup` → put a shortcut to the `.bat` file there.
@@ -205,7 +205,7 @@ Using `pythonw` means no console window appears.
 |---|---|
 | iPad can't reach the server | Same Wi-Fi? Server started with `--host 0.0.0.0`? Firewall allows Python on private networks? |
 | Works at home, not on campus | Many campus networks (e.g. eduroam) block device-to-device traffic and mDNS. Use [Tailscale](https://tailscale.com) on both devices. |
-| `clipsync.local` doesn't resolve | Use the laptop's IP (`ipconfig` → IPv4), or allow UDP 5353 in the firewall. |
+| `clippy.local` doesn't resolve | Use the laptop's IP (`ipconfig` → IPv4), or allow UDP 5353 in the firewall. |
 | Image pastes sideways | Make sure EXIF rotation (`ImageOps.exif_transpose`) runs before encoding. |
 | Transparent areas are black | Expected in apps that only read `CF_DIB`. Apps that read the `PNG` format keep transparency. |
 | HEIC fails to open | Install `pillow-heif` and call `register_heif_opener()` at startup. |
