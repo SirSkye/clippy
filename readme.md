@@ -222,7 +222,8 @@ Using `pythonw` means no console window appears.
 
 ## Roadmap
 
-- [ ] Implement Security Token
+- [x] Implement Security Token
+- [x] Implement QRCode Pairing
 - [ ] Laptop → iPad (`GET /clip` + "Get from Laptop" shortcut)
 - [ ] Clipboard history (`GET /history`)
 - [ ] System tray icon
