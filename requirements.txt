@@ -1,1 +1,4 @@
 fastapi[standard]
+pywin32
+pillow
+pillow-heif
